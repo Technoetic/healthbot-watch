@@ -61,6 +61,7 @@ jobs:
 
       - name: Archive for device
         run: |
+          set -o pipefail
           xcodebuild archive \
             -project "HealthBotWatch.xcodeproj" \
             -scheme "HealthBotWatch WatchKit App" \
@@ -71,7 +72,18 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
             WATCHOS_DEPLOYMENT_TARGET=7.0 \
-            2>&1 | tail -80
+            | xcpretty || xcodebuild archive \
+            -project "HealthBotWatch.xcodeproj" \
+            -scheme "HealthBotWatch WatchKit App" \
+            -destination "generic/platform=watchOS" \
+            -archivePath "${{ github.workspace }}/HealthBotWatch.xcarchive" \
+            -configuration Release \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            WATCHOS_DEPLOYMENT_TARGET=7.0
+          ls -la "${{ github.workspace }}/HealthBotWatch.xcarchive" || echo "xcarchive not found at expected path"
+          find "${{ github.workspace }}" -name "*.xcarchive" 2>/dev/null || echo "no xcarchive found anywhere"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
