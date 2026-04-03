@@ -55,23 +55,28 @@ jobs:
             clean build \
             2>&1 | tail -50
 
-      - name: Archive for device (with signing skip)
+      - name: Download watchOS platform
+        run: |
+          xcodebuild -downloadPlatform watchOS 2>&1 | tail -5 || true
+
+      - name: Archive for device
         run: |
           xcodebuild archive \
             -project "HealthBotWatch.xcodeproj" \
             -scheme "HealthBotWatch WatchKit App" \
-            -sdk watchos \
             -destination "generic/platform=watchOS" \
             -archivePath "${{ github.workspace }}/HealthBotWatch.xcarchive" \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
-            2>&1 | tail -50
+            WATCHOS_DEPLOYMENT_TARGET=7.0 \
+            2>&1 | tail -80
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: HealthBotWatch-${{ github.sha }}
           path: ${{ github.workspace }}/HealthBotWatch.xcarchive
+          if-no-files-found: warn
           retention-days: 7
