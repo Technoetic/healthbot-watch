@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # 수동 실행 버튼
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,68 +22,45 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Build watchOS App (Simulator)
+      - name: List schemes
+        run: xcodebuild -project "HealthBotWatch.xcodeproj" -list
+
+      - name: Build iOS + Watch (Simulator)
         run: |
           xcodebuild \
             -project "HealthBotWatch.xcodeproj" \
-            -scheme "HealthBotWatch WatchKit App" \
-            -sdk watchsimulator \
-            -destination "platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)" \
-            -configuration Release \
-            CODE_SIGNING_ALLOWED=NO \
-            clean build \
-            | xcpretty || xcodebuild \
-            -project "HealthBotWatch.xcodeproj" \
-            -scheme "HealthBotWatch WatchKit App" \
-            -sdk watchsimulator \
-            -destination "platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)" \
+            -scheme "HealthBotWatch" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 16" \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             clean build
 
-      - name: Build watchOS App (Device — no signing)
-        run: |
-          xcodebuild \
-            -project "HealthBotWatch.xcodeproj" \
-            -scheme "HealthBotWatch WatchKit App" \
-            -sdk watchos \
-            -destination "generic/platform=watchOS" \
-            -configuration Release \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGN_IDENTITY="" \
-            DEVELOPMENT_TEAM="" \
-            clean build \
-            2>&1 | tail -50
-
       - name: Download watchOS platform
-        run: |
-          xcodebuild -downloadPlatform watchOS 2>&1 | tail -5 || true
+        run: xcodebuild -downloadPlatform watchOS 2>&1 | tail -5 || true
 
-      - name: Archive for device
+      - name: Archive iOS + Watch (Device)
         run: |
           set -o pipefail
           xcodebuild archive \
             -project "HealthBotWatch.xcodeproj" \
-            -scheme "HealthBotWatch WatchKit App" \
-            -destination "generic/platform=watchOS" \
+            -scheme "HealthBotWatch" \
+            -destination "generic/platform=iOS" \
             -archivePath "${{ github.workspace }}/HealthBotWatch.xcarchive" \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
-            WATCHOS_DEPLOYMENT_TARGET=9.0 \
             | xcpretty || xcodebuild archive \
             -project "HealthBotWatch.xcodeproj" \
-            -scheme "HealthBotWatch WatchKit App" \
-            -destination "generic/platform=watchOS" \
+            -scheme "HealthBotWatch" \
+            -destination "generic/platform=iOS" \
             -archivePath "${{ github.workspace }}/HealthBotWatch.xcarchive" \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
-            DEVELOPMENT_TEAM="" \
-            WATCHOS_DEPLOYMENT_TARGET=7.0
-          ls -la "${{ github.workspace }}/HealthBotWatch.xcarchive" || echo "xcarchive not found at expected path"
-          find "${{ github.workspace }}" -name "*.xcarchive" 2>/dev/null || echo "no xcarchive found anywhere"
+            DEVELOPMENT_TEAM=""
+          ls -la "${{ github.workspace }}/HealthBotWatch.xcarchive" && echo "Archive OK"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
