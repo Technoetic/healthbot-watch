@@ -12,8 +12,6 @@
 		A003 /* HealthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B003 /* HealthManager.swift */; };
 		A004 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B004 /* SettingsStore.swift */; };
 		A005 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B005 /* SettingsView.swift */; };
-		A006 /* Info.plist in Resources (Extension) */ = {isa = PBXBuildFile; fileRef = B006 /* Info.plist (Extension) */; };
-		A007 /* Info.plist in Resources (App) */ = {isa = PBXBuildFile; fileRef = B007 /* Info.plist (App) */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -166,7 +164,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A006 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,7 +171,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A007 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
