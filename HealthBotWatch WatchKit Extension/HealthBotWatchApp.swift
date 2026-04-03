@@ -1,6 +1,5 @@
 import SwiftUI
 import WatchKit
-import BackgroundTasks
 
 @main
 struct HealthBotWatchApp: App {
