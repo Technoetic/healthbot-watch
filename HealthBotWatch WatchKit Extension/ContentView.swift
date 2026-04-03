@@ -80,10 +80,12 @@ struct ContentView: View {
                         }
                         .onChange(of: settings.autoUploadEnabled) { enabled in
                             if enabled {
-                                health.enableBackgroundDelivery(
-                                    token: settings.token,
-                                    serverURL: settings.serverURL
-                                )
+                                if #available(watchOS 8.0, *) {
+                                    health.enableBackgroundDelivery(
+                                        token: settings.token,
+                                        serverURL: settings.serverURL
+                                    )
+                                }
                             }
                         }
                     }
@@ -91,15 +93,16 @@ struct ContentView: View {
                 .padding(.horizontal, 8)
             }
             .navigationTitle("HealthBot")
-            .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
             health.requestAuthorization { _ in
                 if settings.autoUploadEnabled && settings.isConfigured {
-                    health.enableBackgroundDelivery(
-                        token: settings.token,
-                        serverURL: settings.serverURL
-                    )
+                    if #available(watchOS 8.0, *) {
+                        health.enableBackgroundDelivery(
+                            token: settings.token,
+                            serverURL: settings.serverURL
+                        )
+                    }
                 }
             }
         }

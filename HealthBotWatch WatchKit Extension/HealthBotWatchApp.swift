@@ -67,8 +67,8 @@ class AppDelegate: NSObject, WKApplicationDelegate {
                 token: settings.token,
                 serverURL: settings.serverURL
             )
-            // 전송 완료 대기 (최대 20초)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+            // 전송 완료 대기 (최대 25초)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
                 completion()
             }
         }

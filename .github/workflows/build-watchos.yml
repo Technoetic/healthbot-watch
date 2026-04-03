@@ -71,7 +71,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
-            WATCHOS_DEPLOYMENT_TARGET=7.0 \
+            WATCHOS_DEPLOYMENT_TARGET=9.0 \
             | xcpretty || xcodebuild archive \
             -project "HealthBotWatch.xcodeproj" \
             -scheme "HealthBotWatch WatchKit App" \

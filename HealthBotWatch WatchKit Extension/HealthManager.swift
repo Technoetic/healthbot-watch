@@ -285,6 +285,7 @@ class HealthManager: ObservableObject {
     // MARK: - Background Delivery 등록
 
     /// watchOS에서 새 HealthKit 데이터가 생기면 백그라운드에서 깨워서 자동 전송
+    @available(watchOS 8.0, *)
     func enableBackgroundDelivery(token: String, serverURL: String) {
         let types: [HKQuantityTypeIdentifier] = [
             .heartRate, .restingHeartRate, .heartRateVariabilitySDNN,
@@ -372,13 +373,14 @@ class HealthManager: ObservableObject {
             guard let samples = samples as? [HKCategorySample] else {
                 completion(nil); return
             }
-            // asleepUnspecified + asleepCore + asleepDeep + asleepREM 합산
-            let asleepValues: Set<Int> = [
-                HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue,
-                HKCategoryValueSleepAnalysis.asleepCore.rawValue,
-                HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
-                HKCategoryValueSleepAnalysis.asleepREM.rawValue,
-            ]
+            // asleepUnspecified(watchOS 9+) + asleepCore/Deep/REM(watchOS 9+) 또는 inBed 합산
+            var asleepValues: Set<Int> = [HKCategoryValueSleepAnalysis.asleep.rawValue]
+            if #available(watchOS 9.0, *) {
+                asleepValues.insert(HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue)
+                asleepValues.insert(HKCategoryValueSleepAnalysis.asleepCore.rawValue)
+                asleepValues.insert(HKCategoryValueSleepAnalysis.asleepDeep.rawValue)
+                asleepValues.insert(HKCategoryValueSleepAnalysis.asleepREM.rawValue)
+            }
             let totalSeconds = samples
                 .filter { asleepValues.contains($0.value) }
                 .reduce(0.0) { $0 + $1.endDate.timeIntervalSince($1.startDate) }

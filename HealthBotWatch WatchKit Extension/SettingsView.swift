@@ -75,7 +75,6 @@ struct SettingsView: View {
             .padding(.horizontal, 8)
         }
         .navigationTitle("설정")
-        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             tokenInput = settings.token
             serverInput = settings.serverURL
