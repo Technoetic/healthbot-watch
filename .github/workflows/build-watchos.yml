@@ -62,7 +62,7 @@ jobs:
             -scheme "HealthBotWatch WatchKit App" \
             -sdk watchos \
             -destination "generic/platform=watchOS" \
-            -archivePath "$RUNNER_TEMP/HealthBotWatch.xcarchive" \
+            -archivePath "${{ github.workspace }}/HealthBotWatch.xcarchive" \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -73,5 +73,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: HealthBotWatch-${{ github.sha }}
-          path: ${{ runner.temp }}/HealthBotWatch.xcarchive
+          path: ${{ github.workspace }}/HealthBotWatch.xcarchive
           retention-days: 7
